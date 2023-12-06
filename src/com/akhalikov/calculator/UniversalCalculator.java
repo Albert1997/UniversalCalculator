@@ -45,26 +45,13 @@ public class UniversalCalculator {
         }
 
 
-        int result;
-
-        switch (operation) {
-            case "+":
-                result = num1 + num2;
-                break;
-            case "-":
-                result = num1 - num2;
-                break;
-            case "*":
-                result = num1 * num2;
-                break;
-            case "/":
-                result = num1 / num2;
-                break;
-            default:
-                throw new IllegalArgumentException("Некорректная операция");
+        int result = 0;
+        try {
+            result = Integer.parseInt(String.valueOf(calculate(num1, num2, operation)));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Некорректная операция");
+            return;
         }
-
-
         if (isRomanNumeral(strNum1) && isRomanNumeral(strNum2)) {
             String romanResult = convertDecimalToRoman(result, romanNumerals);
             System.out.println("Результат: " + romanResult);
@@ -128,7 +115,32 @@ public class UniversalCalculator {
 
         return result.toString();
     }
+
+    private static int calculate(int num1, int num2, String operation) {
+        int result;
+
+        switch (operation) {
+            case "+":
+                result = num1 + num2;
+                break;
+            case "-":
+                result = num1 - num2;
+                break;
+            case "*":
+                result = num1 * num2;
+                break;
+            case "/":
+                result = num1 / num2;
+                break;
+            default:
+                throw new IllegalArgumentException("Некорректная операция");
+        }
+
+        return result;
+    }
 }
+
+
 
 
 
