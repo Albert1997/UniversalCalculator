@@ -45,13 +45,7 @@ public class UniversalCalculator {
         }
 
 
-        int result = 0;
-        try {
-            result = Integer.parseInt(String.valueOf(calculate(num1, num2, operation)));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Некорректная операция");
-            return;
-        }
+        int result = calculate(num1, num2, operation);
         if (isRomanNumeral(strNum1) && isRomanNumeral(strNum2)) {
             String romanResult = convertDecimalToRoman(result, romanNumerals);
             System.out.println("Результат: " + romanResult);
