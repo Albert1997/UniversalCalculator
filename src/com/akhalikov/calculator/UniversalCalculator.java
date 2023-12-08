@@ -1,23 +1,23 @@
 package com.akhalikov.calculator;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 public class UniversalCalculator {
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
 
-
-        Map<Character, Integer> romanNumerals = new HashMap<>();
-        romanNumerals.put('I', 1);
-        romanNumerals.put('V', 5);
-        romanNumerals.put('X', 10);
-
-
         System.out.print("Введите выражение: ");
+
         String input = scanner.nextLine();
 
+        String calc = calc(input);
+        System.out.println(calc);
+    }
+
+    public static String calc(String input) {
 
         String[] tokens = input.split(" ");
 
@@ -29,85 +29,70 @@ public class UniversalCalculator {
         String strNum2 = tokens[2];
         String operation = tokens[1];
 
-
         int num1, num2;
+
         if (isRomanNumeral(strNum1) && isRomanNumeral(strNum2)) {
-            num1 = convertRomanToDecimal(strNum1, romanNumerals);
-            num2 = convertRomanToDecimal(strNum2, romanNumerals);
-        } else {
+            num1 = convertRomanToDecimal(strNum1);
+            num2 = convertRomanToDecimal(strNum2);
+
+        } else if (isArabicNumeral(strNum1) && isArabicNumeral(strNum2)) {
             num1 = Integer.parseInt(strNum1);
             num2 = Integer.parseInt(strNum2);
 
+        } else {
+            throw new RuntimeException("Оба числа не Арабские и не Римские");
 
-            if (num1 < 1 || num1 > 10 || num2 < 1 || num2 > 10) {
-                throw new IllegalArgumentException("Числа должны быть от 1 до 10");
-            }
         }
-
-
+        if (num1 < 1 || num1 > 10 || num2 < 1 || num2 > 10) {
+            throw new IllegalArgumentException("Числа должны быть от 1 до 10");
+        }
         int result = calculate(num1, num2, operation);
         if (isRomanNumeral(strNum1) && isRomanNumeral(strNum2)) {
-            String romanResult = convertDecimalToRoman(result, romanNumerals);
-            System.out.println("Результат: " + romanResult);
+
+            if (result > 0) {
+                return convertDecimalToRoman(result);
+            }
+            throw new IllegalArgumentException("Римские числа не могут быть отрицательными");
+
         } else {
-            System.out.println("Результат: " + result);
 
-
+            return String.valueOf(result);
         }
-    }
 
+    }
 
     private static boolean isRomanNumeral(String input) {
-        return input.matches("[IVXLCDM]+");
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c != 'I' && c != 'V' && c != 'X' && c != 'L' && c != 'C' && c != 'D' && c != 'M') {
+                return false;
+            }
+        }
+        return true;
     }
 
-
-    private static int convertRomanToDecimal(String input, Map<Character, Integer> romanNumerals) {
-        int result = 0;
+    private static boolean isArabicNumeral(String input) {
 
         for (int i = 0; i < input.length(); i++) {
-            char currentNumeral = input.charAt(i);
-
-
-            if (!romanNumerals.containsKey(currentNumeral)) {
-                throw new IllegalArgumentException("Некорректная римская цифра: " + currentNumeral);
-            }
-
-            int currentValue = romanNumerals.get(currentNumeral);
-
-
-            if (i + 1 < input.length()) {
-                char nextNumeral = input.charAt(i + 1);
-                int nextValue = romanNumerals.get(nextNumeral);
-
-                if (nextValue > currentValue) {
-                    result -= currentValue;
-                } else {
-                    result += currentValue;
-                }
-            } else {
-                result += currentValue;
-            }
+            int b = input.charAt(i);
+            if (b != '1' && b != '2' && b != '3' && b != '4' && b != '5' && b != '6' && b != '7' && b != '8' && b != '9' && b != '0')
+                return false;
         }
-
-        return result;
+        return true;
     }
 
-
-    private static String convertDecimalToRoman(int input, Map<Character, Integer> romanNumerals) {
-        StringBuilder result = new StringBuilder();
-
-        for (Map.Entry<Character, Integer> entry : romanNumerals.entrySet()) {
-            char numeral = entry.getKey();
-            int value = entry.getValue();
-
-            while (input >= value) {
-                result.append(numeral);
-                input -= value;
+    private static int convertRomanToDecimal(String input) {
+        int result = 0;
+        String[] romanSymbols = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+        for (int i = 0; i < romanSymbols.length; i++) {
+            if (romanSymbols[i].equals(input)) {
+                result = i + 1;
             }
         }
+        if (result == 0)
+            throw new RuntimeException("Некорректное римское число");
 
-        return result.toString();
+        return result;
     }
 
     private static int calculate(int num1, int num2, String operation) {
@@ -132,7 +117,30 @@ public class UniversalCalculator {
 
         return result;
     }
+
+    private static String convertDecimalToRoman(int decimal) {
+
+        String[] romanSymbols = {"0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+                "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+                "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX",
+                "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL",
+                "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L",
+                "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX",
+                "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX",
+                "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX",
+                "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC",
+                "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"};
+
+        return romanSymbols[decimal];
+
+    }
 }
+
+
+
+
+
+
 
 
 
